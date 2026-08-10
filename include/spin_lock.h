@@ -9,7 +9,7 @@ namespace tcpr
 
 class SpinLock
 {
-  public:
+public:
     void acquire()
     {
         while (mFlag.test_and_set(std::memory_order_acquire))
@@ -23,14 +23,14 @@ class SpinLock
         mFlag.clear(std::memory_order_release);
     }
 
-  private:
+private:
     std::atomic_flag mFlag;
 };
 
 class Guard
 {
-  public:
-    Guard(SpinLock &spinLock) : mSpinLock(spinLock)
+public:
+    Guard(SpinLock& spinLock) : mSpinLock(spinLock)
     {
         mSpinLock.acquire();
     }
@@ -40,8 +40,8 @@ class Guard
         mSpinLock.release();
     }
 
-  private:
-    SpinLock &mSpinLock;
+private:
+    SpinLock& mSpinLock;
 };
 
 } // namespace tcpr
