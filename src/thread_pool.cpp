@@ -1,5 +1,4 @@
 #include "thread_pool.h"
-#include <cstddef>
 
 namespace tcpr
 {

@@ -1,20 +1,17 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
-#include <filesystem>
-#include <vector>
-
-#include <glm/glm.hpp>
+#include "common.h"
 
 namespace tcpr
 {
 
 class Image
 {
-  public:
+public:
     Image(size_t width, size_t height);
 
-    void save(const std::filesystem::path &filename);
+    void save(const std::filesystem::path& filename);
 
     size_t getWidth() const
     {
@@ -34,8 +31,8 @@ class Image
         mPixels[y * mWidth + x] = color;
     }
 
-  private:
-    size_t mWidth, mHeight;
+private:
+    size_t                 mWidth, mHeight;
     std::vector<glm::vec3> mPixels;
 };
 

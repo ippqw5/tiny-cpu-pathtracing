@@ -1,13 +1,7 @@
 #ifndef __THREAD_POOL_H__
 #define __THREAD_POOL_H__
 
-#include <atomic>
-#include <cstddef>
-#include <functional>
-#include <mutex>
-#include <queue>
-#include <thread>
-#include <vector>
+#include "common.h"
 
 namespace tcpr
 {

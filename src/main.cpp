@@ -1,7 +1,3 @@
-#include <iostream>
-
-#include <glm/glm.hpp>
-
 #include "image.h"
 #include "thread_pool.h"
 

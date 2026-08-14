@@ -1,8 +1,7 @@
 #ifndef __SPIN_LOCK_H__
 #define __SPIN_LOCK_H__
 
-#include <atomic>
-#include <thread>
+#include "common.h"
 
 namespace tcpr
 {
