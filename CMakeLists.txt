@@ -15,6 +15,7 @@ add_executable(TinyCPUPathTracing ${src_files})
 target_compile_definitions(TinyCPUPathTracing PRIVATE
     GLM_FORCE_RADIANS
     GLM_FORCE_DEPTH_ZERO_TO_ONE
+    GLM_FORCE_LEFT_HANDED
 )
 
 target_include_directories(TinyCPUPathTracing PUBLIC include)

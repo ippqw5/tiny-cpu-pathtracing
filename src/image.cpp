@@ -9,7 +9,7 @@ Image::Image(size_t width, size_t height) : mWidth(width), mHeight(height)
 
 void Image::save(const std::filesystem::path& filename)
 {
-    std::ofstream file(filename);
+    std::ofstream file(filename, std::ios::binary);
     // PPM
     file << "P6\n" << mWidth << ' ' << mHeight << "\n255\n";
 

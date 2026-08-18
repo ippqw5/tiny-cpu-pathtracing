@@ -13,7 +13,7 @@ class Camera
 public:
     Camera(Image& image, const glm::vec3& pos, const glm::vec3& viewpoint, float fovy);
 
-    Ray generateRay(const glm::vec2& pixelCoord, const glm::vec2& offset = {0.5f, 0.5f}) const;
+    Ray generateRay(const glm::ivec2& pixelCoord, const glm::vec2& offset = {0.5f, 0.5f}) const;
 
 private:
     Image&    mImage;
