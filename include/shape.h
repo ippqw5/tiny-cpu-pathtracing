@@ -1,11 +1,8 @@
 #ifndef __SHAPE_H__
 #define __SHAPE_H__
 
+#include "common.h"
 #include "ray.h"
-#include <glm/glm.hpp>
-#include <limits>
-#include <optional>
-
 
 namespace tcpr
 {
@@ -18,14 +15,14 @@ struct Shape
 
 struct Sphere : public Shape
 {
-    Sphere(const glm::vec3& center, float radius) : center(center), radius(radius)
+    Sphere(const glm::vec3& center, float radius) : c(center), r(radius)
     {
     }
 
     std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
 
-    glm::vec3 center;
-    float     radius;
+    glm::vec3 c;
+    float     r;
 };
 
 struct Triangle : public Shape
@@ -50,6 +47,18 @@ struct Triangle : public Shape
 
     glm::vec3 p0, p1, p2;
     glm::vec3 n0, n1, n2;
+};
+
+struct Plane : public Shape
+{
+    Plane(const glm::vec3& point, const glm::vec3& normal) : p(point), n(glm::normalize(normal))
+    {
+    }
+
+    std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
+
+    glm::vec3 p;
+    glm::vec3 n;
 };
 
 } // namespace tcpr

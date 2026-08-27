@@ -8,17 +8,17 @@ namespace tcpr
 
 struct Ray
 {
-    Ray(glm::vec3 origin, glm::vec3 direction) : origin(origin), direction(direction)
+    Ray(glm::vec3 origin, glm::vec3 direction) : ori(origin), dir(direction)
     {
     }
 
     glm::vec3 at(float t) const
     {
-        return origin + t * direction;
+        return ori + t * dir;
     }
 
-    glm::vec3 origin;
-    glm::vec3 direction;
+    glm::vec3 ori;
+    glm::vec3 dir;
 };
 
 struct HitInfo

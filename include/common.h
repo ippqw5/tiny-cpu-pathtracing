@@ -8,11 +8,13 @@
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <optional>
 #include <ostream>
 #include <queue>
 #include <string>
 #include <thread>
 #include <vector>
+
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
