@@ -4,13 +4,13 @@ namespace tcpr
 {
 void ThreadPool::Entry(ThreadPool* master)
 {
-    while (master->mAlive)
+    while (master->m_alive)
     {
         Task* task = master->getTask();
         if (task)
         {
             task->run();
-            master->mPendingTaskCount--;
+            master->m_pending_task_count--;
         }
         else
         {
@@ -19,19 +19,19 @@ void ThreadPool::Entry(ThreadPool* master)
     }
 }
 
-ThreadPool::ThreadPool(size_t threadCount)
+ThreadPool::ThreadPool(size_t thread_count)
 {
-    mAlive = true;
-    mPendingTaskCount = 0;
-    if (threadCount == 0)
+    m_alive = true;
+    m_pending_task_count = 0;
+    if (thread_count == 0)
     {
         // set to the maximum of hardware cores
-        threadCount = std::thread::hardware_concurrency();
+        thread_count = std::thread::hardware_concurrency();
     }
 
-    for (size_t i = 0; i < threadCount; i++)
+    for (size_t i = 0; i < thread_count; i++)
     {
-        mThreads.push_back(std::thread(ThreadPool::Entry, this));
+        m_threads.push_back(std::thread(ThreadPool::Entry, this));
     }
 }
 
@@ -39,13 +39,13 @@ ThreadPool::~ThreadPool()
 {
     wait();
 
-    mAlive = false;
+    m_alive = false;
 
-    for (auto& thread : mThreads)
+    for (auto& thread : m_threads)
     {
         thread.join();
     }
-    mThreads.clear();
+    m_threads.clear();
 }
 
 class ParallelForTask : public Task
@@ -78,7 +78,7 @@ void ThreadPool::parallelFor(size_t width, size_t height, const std::function<vo
 
 void ThreadPool::wait() const
 {
-    while (mPendingTaskCount > 0)
+    while (m_pending_task_count > 0)
     {
         std::this_thread::yield();
     }
@@ -86,19 +86,19 @@ void ThreadPool::wait() const
 
 void ThreadPool::addTask(Task* task)
 {
-    std::lock_guard<std::mutex> guard(mLock);
-    mPendingTaskCount++;
-    mTasks.push(task);
+    std::lock_guard<std::mutex> guard(m_lock);
+    m_pending_task_count++;
+    m_tasks.push(task);
 }
 
 Task* ThreadPool::getTask()
 {
-    std::lock_guard<std::mutex> guard(mLock);
-    if (mTasks.empty())
+    std::lock_guard<std::mutex> guard(m_lock);
+    if (m_tasks.empty())
         return nullptr;
 
-    Task* task = mTasks.front();
-    mTasks.pop();
+    Task* task = m_tasks.front();
+    m_tasks.pop();
     return task;
 }
 

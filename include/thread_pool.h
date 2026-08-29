@@ -16,7 +16,7 @@ class ThreadPool
 {
 public:
     static void Entry(ThreadPool* master);
-    ThreadPool(size_t threadCount = 0);
+    ThreadPool(size_t thread_count = 0);
     ~ThreadPool();
 
     void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda);
@@ -26,11 +26,11 @@ public:
     Task* getTask();
 
 private:
-    std::vector<std::thread> mThreads;
-    std::queue<Task*>        mTasks;
-    std::mutex               mLock;
-    std::atomic<bool>        mAlive;
-    std::atomic<size_t>      mPendingTaskCount;
+    std::vector<std::thread> m_threads;
+    std::queue<Task*>        m_tasks;
+    std::mutex               m_lock;
+    std::atomic<bool>        m_alive;
+    std::atomic<size_t>      m_pending_task_count;
 };
 
 } // namespace tcpr

@@ -2,6 +2,7 @@
 #include "image.h"
 #include "model.h"
 #include "ray.h"
+#include "scene.h"
 #include "shape.h"
 #include "thread_pool.h"
 
@@ -16,29 +17,37 @@ public:
 
 int main()
 {
-    tcpr::ThreadPool threadPool{};
+    tcpr::ThreadPool thread_pool{16};
 
-    tcpr::Image  image{400, 300};
-    tcpr::Camera camera{image, {-0.6f, 0.1f, 0.f}, {0.0f, 0.0f, 0.0f}, 90.0f};
-    tcpr::Sphere sphere{{0.0f, 0.0f, 0.0f}, 0.5f};
+    tcpr::Image image{800, 600};
+
+    tcpr::Camera camera{image, {-1.6, 0, 0}, {0, 0, 0}, 90};
+
+    tcpr::Sphere sphere{{0, 0, 0}, 0.3};
     tcpr::Model  model{"assets/simple_dragon.obj"};
     tcpr::Plane  plane{
-         {0.0f, 0.0f, 0.0f},
-         {0.0f, 1.0f, 0.0f},
+        {0, 0, 0},
+        {0, 1, 0},
     };
-    tcpr::Shape& shape = plane;
 
-    glm::vec3 lightPos{-1.0f, 2.0f, 1.0f};
+    tcpr::Scene scene{};
+    scene.addShape(&model);
+    scene.addShape(&sphere, {0, 0, 1.0});
+    scene.addShape(&plane, {0, -0.5, 0});
+
+    glm::vec3 light_pos{-1, 2, 1};
 
     std::atomic<size_t> count{0};
 
-    threadPool.parallelFor(image.getWidth(), image.getHeight(), [&](size_t x, size_t y) {
+    thread_pool.parallelFor(image.getWidth(), image.getHeight(), [&](size_t x, size_t y) {
         tcpr::Ray ray = camera.generateRay({x, y});
-        auto      hitInfo = shape.intersect(ray);
-        if (hitInfo.has_value())
+        auto      hit_info = scene.intersect(ray);
+        if (hit_info.has_value())
         {
-            glm::vec3 L = glm::normalize(lightPos - hitInfo->p);
-            float     cos = glm::max(0.f, glm::dot(hitInfo->n, L));
+
+            auto  L = glm::normalize(light_pos - hit_info->p);
+            float cos = glm::max(0.f, glm::dot(hit_info->n, L));
+
             image.setPixel(x, y, {cos, cos, cos});
         }
 
@@ -49,7 +58,7 @@ int main()
         }
     });
 
-    threadPool.wait();
+    thread_pool.wait();
 
     image.save("test.ppm");
     std::cout << "Image saved to test.ppm" << std::endl;

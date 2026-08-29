@@ -2,20 +2,21 @@
 
 namespace tcpr
 {
-Image::Image(size_t width, size_t height) : mWidth(width), mHeight(height)
+Image::Image(size_t width, size_t height) : m_width(width), m_height(height)
 {
-    mPixels.resize(width * height);
+    m_pixels.resize(width * height);
 }
 
 void Image::save(const std::filesystem::path& filename)
 {
     std::ofstream file(filename, std::ios::binary);
     // PPM
-    file << "P6\n" << mWidth << ' ' << mHeight << "\n255\n";
+    file << "P6\n"
+         << m_width << ' ' << m_height << "\n255\n";
 
-    for (size_t y = 0; y < mHeight; y++)
+    for (size_t y = 0; y < m_height; y++)
     {
-        for (size_t x = 0; x < mWidth; x++)
+        for (size_t x = 0; x < m_width; x++)
         {
             const glm::vec3& color = getPixel(x, y);
             glm::uvec3       color_u = glm::clamp(color * 255.f, 0.f, 255.f);

@@ -15,25 +15,25 @@ public:
 
     size_t getWidth() const
     {
-        return mWidth;
+        return m_width;
     }
     size_t getHeight() const
     {
-        return mHeight;
+        return m_height;
     }
 
     glm::vec3 getPixel(size_t x, size_t y)
     {
-        return mPixels[y * mWidth + x];
+        return m_pixels[y * m_width + x];
     }
     void setPixel(size_t x, size_t y, glm::vec3 color)
     {
-        mPixels[y * mWidth + x] = color;
+        m_pixels[y * m_width + x] = color;
     }
 
 private:
-    size_t                 mWidth, mHeight;
-    std::vector<glm::vec3> mPixels;
+    size_t                 m_width, m_height;
+    std::vector<glm::vec3> m_pixels;
 };
 
 } // namespace tcpr

@@ -13,16 +13,16 @@ class Camera
 public:
     Camera(Image& image, const glm::vec3& pos, const glm::vec3& viewpoint, float fovy);
 
-    Ray generateRay(const glm::ivec2& pixelCoord, const glm::vec2& offset = {0.5f, 0.5f}) const;
+    Ray generateRay(const glm::ivec2& pixel_coord, const glm::vec2& offset = {0.5f, 0.5f}) const;
 
 private:
-    Image&    mImage;
-    glm::vec3 mPos;
-    glm::vec3 mViewpoint;
-    float     mFovy;
+    Image&    m_image;
+    glm::vec3 m_pos;
+    glm::vec3 m_viewpoint;
+    float     m_fovy;
 
-    glm::mat4 mCameraFromClip;
-    glm::mat4 mWorldFromCamera;
+    glm::mat4 m_camera_from_clip;
+    glm::mat4 m_world_from_camera;
 };
 
 } // namespace tcpr

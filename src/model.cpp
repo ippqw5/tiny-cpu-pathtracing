@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 
-
 namespace tcpr
 {
 
@@ -45,25 +44,25 @@ Model::Model(const std::filesystem::path& path)
             iss >> idx_v.x >> trash >> trash >> idx_vn.x;
             iss >> idx_v.y >> trash >> trash >> idx_vn.y;
             iss >> idx_v.z >> trash >> trash >> idx_vn.z;
-            mTriangles.push_back(Triangle(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
-                                          normals[idx_vn.x - 1], normals[idx_vn.y - 1], normals[idx_vn.z - 1]));
+            m_triangles.push_back(Triangle(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
+                                           normals[idx_vn.x - 1], normals[idx_vn.y - 1], normals[idx_vn.z - 1]));
         }
     }
 }
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float tMin, float tMax) const
 {
-    std::optional<HitInfo> closestHitInfo{};
-    for (const auto& tri : mTriangles)
+    std::optional<HitInfo> closest_hit_info{};
+    for (const auto& tri : m_triangles)
     {
-        auto hitInfo = tri.intersect(ray, tMin, tMax);
-        if (hitInfo.has_value())
+        auto hit_info = tri.intersect(ray, tMin, tMax);
+        if (hit_info.has_value())
         {
-            tMax = hitInfo->t;
-            closestHitInfo = hitInfo;
+            tMax = hit_info->t;
+            closest_hit_info = hit_info;
         }
     }
-    return closestHitInfo;
+    return closest_hit_info;
 }
 
 } // namespace tcpr

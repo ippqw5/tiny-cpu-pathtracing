@@ -6,21 +6,22 @@ namespace tcpr
 
 std::optional<HitInfo> Sphere::intersect(const Ray& ray, float tMin, float tMax) const
 {
-    glm::vec3 oc = ray.ori - c;
+    glm::vec3 oc = ray.ori - center;
+    float     a = glm::dot(ray.dir, ray.dir);
     float     b = 2.0f * glm::dot(ray.dir, oc);
-    float     c = glm::dot(oc, oc) - r * r;
-    float     delta = b * b - 4 * c;
+    float     c = glm::dot(oc, oc) - radius * radius;
+    float     delta = b * b - 4 * a * c;
 
     if (delta < 0)
         return {};
-    float t = (-b - glm::sqrt(delta)) * 0.5f;
+    float t = (-b - glm::sqrt(delta)) * 0.5f / a;
     if (t < 0.f)
-        t = (-b + glm::sqrt(delta)) * 0.5f;
+        t = (-b + glm::sqrt(delta)) * 0.5f / a;
     if (t > tMin && t < tMax)
     {
-        glm::vec3 p = ray.at(t);
-        glm::vec3 n = glm::normalize(p - c);
-        return HitInfo{.t = t, .p = p, .n = n};
+        glm::vec3 hitP = ray.at(t);
+        glm::vec3 hitN = glm::normalize(hitP - center);
+        return HitInfo{.t = t, .p = hitP, .n = hitN};
     }
     return {};
 }
@@ -46,9 +47,9 @@ std::optional<HitInfo> Triangle::intersect(const Ray& ray, float tMin, float tMa
     float t = glm::dot(s2, e2) * inv_det;
     if (t > tMin && t < tMax)
     {
-        glm::vec3 p = ray.at(t);
-        glm::vec3 n = glm::normalize((1.f - u - v) * n0 + u * n1 + v * n2);
-        return HitInfo{.t = t, .p = p, .n = n};
+        glm::vec3 hitP = ray.at(t);
+        glm::vec3 hitN = glm::normalize((1.f - u - v) * n0 + u * n1 + v * n2);
+        return HitInfo{.t = t, .p = hitP, .n = hitN};
     }
 
     return {};
@@ -59,8 +60,9 @@ std::optional<HitInfo> Plane::intersect(const Ray& ray, float tMin, float tMax) 
     float t = glm::dot(p - ray.ori, n) / glm::dot(ray.dir, n);
     if (t > tMin && t < tMax)
     {
-        glm::vec3 p = ray.at(t);
-        return HitInfo{.t = t, .p = p, .n = n};
+        glm::vec3 hitP = ray.at(t);
+        glm::vec3 hitN = n;
+        return HitInfo{.t = t, .p = hitP, .n = hitN};
     }
     return {};
 }

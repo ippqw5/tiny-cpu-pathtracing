@@ -11,7 +11,7 @@ class SpinLock
 public:
     void acquire()
     {
-        while (mFlag.test_and_set(std::memory_order_acquire))
+        while (m_flag.test_and_set(std::memory_order_acquire))
         {
             std::this_thread::yield();
         }
@@ -19,28 +19,28 @@ public:
 
     void release()
     {
-        mFlag.clear(std::memory_order_release);
+        m_flag.clear(std::memory_order_release);
     }
 
 private:
-    std::atomic_flag mFlag;
+    std::atomic_flag m_flag;
 };
 
 class Guard
 {
 public:
-    Guard(SpinLock& spinLock) : mSpinLock(spinLock)
+    Guard(SpinLock& spin_lock) : m_spin_lock(spin_lock)
     {
-        mSpinLock.acquire();
+        m_spin_lock.acquire();
     }
 
     ~Guard()
     {
-        mSpinLock.release();
+        m_spin_lock.release();
     }
 
 private:
-    SpinLock& mSpinLock;
+    SpinLock& m_spin_lock;
 };
 
 } // namespace tcpr
