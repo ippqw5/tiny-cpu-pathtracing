@@ -2,6 +2,7 @@
 #define __RAY_H__
 
 #include "common.h"
+#include "material.h"
 
 namespace tcpr
 {
@@ -33,6 +34,8 @@ struct HitInfo
     float     t;
     glm::vec3 p;
     glm::vec3 n;
+
+    const Material* material = nullptr;
 };
 
 } // namespace tcpr

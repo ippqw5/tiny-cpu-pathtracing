@@ -1,10 +1,9 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
+#include "common.h"
 #include "ray.h"
 #include "shape.h"
-
-#include <filesystem>
 
 namespace tcpr
 {

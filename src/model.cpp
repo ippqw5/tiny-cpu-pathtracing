@@ -1,8 +1,5 @@
 #include "model.h"
 #include "shape.h"
-#include <fstream>
-#include <iostream>
-#include <sstream>
 
 namespace tcpr
 {

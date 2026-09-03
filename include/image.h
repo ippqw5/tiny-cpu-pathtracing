@@ -6,6 +6,13 @@
 namespace tcpr
 {
 
+struct Pixel
+{
+    glm::vec3 color = {0.f, 0.f, 0.f};
+
+    size_t sample_count = 0;
+};
+
 class Image
 {
 public:
@@ -22,18 +29,19 @@ public:
         return m_height;
     }
 
-    glm::vec3 getPixel(size_t x, size_t y)
+    Pixel getPixel(size_t x, size_t y)
     {
         return m_pixels[y * m_width + x];
     }
-    void setPixel(size_t x, size_t y, glm::vec3 color)
+    void addSample(size_t x, size_t y, glm::vec3 color)
     {
-        m_pixels[y * m_width + x] = color;
+        m_pixels[y * m_width + x].color += color;
+        m_pixels[y * m_width + x].sample_count++;
     }
 
 private:
-    size_t                 m_width, m_height;
-    std::vector<glm::vec3> m_pixels;
+    size_t             m_width, m_height;
+    std::vector<Pixel> m_pixels;
 };
 
 } // namespace tcpr

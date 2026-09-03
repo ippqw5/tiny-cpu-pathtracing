@@ -67,9 +67,9 @@ private:
 
 void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda)
 {
-    for (int x = 0; x < width; x++)
+    for (size_t x = 0; x < width; x++)
     {
-        for (int y = 0; y < height; y++)
+        for (size_t y = 0; y < height; y++)
         {
             addTask(new ParallelForTask(x, y, lambda));
         }

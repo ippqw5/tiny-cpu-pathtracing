@@ -1,4 +1,5 @@
 #include "image.h"
+#include "rgb.h"
 
 namespace tcpr
 {
@@ -18,11 +19,11 @@ void Image::save(const std::filesystem::path& filename)
     {
         for (size_t x = 0; x < m_width; x++)
         {
-            const glm::vec3& color = getPixel(x, y);
-            glm::uvec3       color_u = glm::clamp(color * 255.f, 0.f, 255.f);
+            Pixel pixel(getPixel(x, y));
+            RGB   color(pixel.color / static_cast<float>(pixel.sample_count));
 
-            file << static_cast<uint8_t>(color_u.x) << static_cast<uint8_t>(color_u.y)
-                 << static_cast<uint8_t>(color_u.z);
+            file << static_cast<uint8_t>(color.r) << static_cast<uint8_t>(color.g)
+                 << static_cast<uint8_t>(color.b);
         }
     }
 }
