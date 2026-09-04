@@ -1,5 +1,5 @@
-#ifndef __RNG_H__
-#define __RNG_H__
+#ifndef RNG_H
+#define RNG_H
 
 namespace tcpr
 {
@@ -31,4 +31,4 @@ private:
 };
 } // namespace tcpr
 
-#endif // __RNG_H__
+#endif // RNG_H

@@ -1,5 +1,5 @@
-#ifndef __MATERIAL_H__
-#define __MATERIAL_H__
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #include "../util/common.h"
 
@@ -16,4 +16,4 @@ struct Material
 
 } // namespace tcpr
 
-#endif // __MATERIAL_H__
+#endif // MATERIAL_H

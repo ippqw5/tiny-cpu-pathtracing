@@ -1,5 +1,5 @@
-#ifndef __RGB_H__
-#define __RGB_H__
+#ifndef RGB_H
+#define RGB_H
 
 #include "./common.h"
 
@@ -18,10 +18,9 @@ public:
 
     operator glm::vec3() const;
 
-public:
     int r, g, b;
 };
 
 } // namespace tcpr
 
-#endif // __RGB_H__
+#endif // RGB_H

@@ -4,29 +4,33 @@
 namespace tcpr
 {
 
-std::optional<HitInfo> Sphere::intersect(const Ray& ray, float tMin, float tMax) const
+std::optional<HitInfo> Sphere::intersect(const Ray& ray, float t_min, float t_max) const
 {
     glm::vec3 oc = ray.ori - center;
     float     a = glm::dot(ray.dir, ray.dir);
     float     b = 2.0f * glm::dot(ray.dir, oc);
-    float     c = glm::dot(oc, oc) - radius * radius;
-    float     delta = b * b - 4 * a * c;
+    float     c = glm::dot(oc, oc) - (radius * radius);
+    float     delta = (b * b) - (4 * a * c);
 
     if (delta < 0)
+    {
         return {};
+    }
     float t = (-b - glm::sqrt(delta)) * 0.5f / a;
     if (t < 0.f)
-        t = (-b + glm::sqrt(delta)) * 0.5f / a;
-    if (t > tMin && t < tMax)
     {
-        glm::vec3 hitP = ray.at(t);
-        glm::vec3 hitN = glm::normalize(hitP - center);
-        return HitInfo{.t = t, .p = hitP, .n = hitN};
+        t = (-b + glm::sqrt(delta)) * 0.5f / a;
+    }
+    if (t > t_min && t < t_max)
+    {
+        glm::vec3 hit_p = ray.at(t);
+        glm::vec3 hit_n = glm::normalize(hit_p - center);
+        return HitInfo{.t = t, .p = hit_p, .n = hit_n};
     }
     return {};
 }
 
-std::optional<HitInfo> Triangle::intersect(const Ray& ray, float tMin, float tMax) const
+std::optional<HitInfo> Triangle::intersect(const Ray& ray, float t_min, float t_max) const
 {
     glm::vec3 e1 = p1 - p0;
     glm::vec3 e2 = p2 - p0;
@@ -39,30 +43,34 @@ std::optional<HitInfo> Triangle::intersect(const Ray& ray, float tMin, float tMa
 
     float u = glm::dot(s1, s) * inv_det;
     if (u < 0 || u > 1)
+    {
         return {};
+    }
     float v = glm::dot(s2, ray.dir) * inv_det;
     if (v < 0 || u + v > 1)
+    {
         return {};
+    }
 
     float t = glm::dot(s2, e2) * inv_det;
-    if (t > tMin && t < tMax)
+    if (t > t_min && t < t_max)
     {
-        glm::vec3 hitP = ray.at(t);
-        glm::vec3 hitN = glm::normalize((1.f - u - v) * n0 + u * n1 + v * n2);
-        return HitInfo{.t = t, .p = hitP, .n = hitN};
+        glm::vec3 hit_p = ray.at(t);
+        glm::vec3 hit_n = glm::normalize((1.f - u - v) * n0 + u * n1 + v * n2);
+        return HitInfo{.t = t, .p = hit_p, .n = hit_n};
     }
 
     return {};
 }
 
-std::optional<HitInfo> Plane::intersect(const Ray& ray, float tMin, float tMax) const
+std::optional<HitInfo> Plane::intersect(const Ray& ray, float t_min, float t_max) const
 {
     float t = glm::dot(p - ray.ori, n) / glm::dot(ray.dir, n);
-    if (t > tMin && t < tMax)
+    if (t > t_min && t < t_max)
     {
-        glm::vec3 hitP = ray.at(t);
-        glm::vec3 hitN = n;
-        return HitInfo{.t = t, .p = hitP, .n = hitN};
+        glm::vec3 hit_p = ray.at(t);
+        glm::vec3 hit_n = n;
+        return HitInfo{.t = t, .p = hit_p, .n = hit_n};
     }
     return {};
 }

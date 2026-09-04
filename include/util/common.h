@@ -1,5 +1,5 @@
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <atomic>
 #include <chrono>
@@ -16,8 +16,8 @@
 #include <sstream>
 #include <string>
 #include <thread>
+#include <utility>
 #include <vector>
-
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
@@ -25,4 +25,7 @@
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
 
-#endif // __COMMON_H__
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
+#endif // COMMON_H

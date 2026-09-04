@@ -1,5 +1,5 @@
-#ifndef __RENDERER_H__
-#define __RENDERER_H__
+#ifndef RENDERER_H
+#define RENDERER_H
 
 #include "../camera/camera.h"
 #include "../shape/scene.h"
@@ -30,4 +30,4 @@ private:
 
 } // namespace tcpr
 
-#endif // __RENDERER_H__
+#endif // RENDERER_H

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "renderer/renderer.h"
 #include "thread/thread_pool.h"
 #include "util/frame.h"
@@ -12,7 +14,7 @@ glm::vec3 Renderer::renderPixel(glm::ivec2 pixel_coord, RNG& rng)
     // 1. 生成当前采样的相机射线（像素内偏移在 [-3, 1] 区间，与原始 main.cpp 行为一致）
     Ray ray = m_camera.generateRay(
         pixel_coord,
-        {rng.uniform() * 2.f - 1.f, rng.uniform() * 2.f - 1.f}
+        {(rng.uniform() * 2.f) - 1.f, (rng.uniform() * 2.f) - 1.f}
     );
 
     glm::vec3 beta = {1.f, 1.f, 1.f};  // 累积的路径权重
@@ -77,7 +79,8 @@ void Renderer::render(size_t spp, const std::filesystem::path& filename)
 
     Progress progress(progress_total, "Render Progress", 10);
 
-    size_t spp_count = 0, spp_in_one_pass = 1;
+    size_t spp_count = 0;
+    size_t spp_in_one_pass = 1;
     while (spp_count < spp)
     {
         {
@@ -93,7 +96,7 @@ void Renderer::render(size_t spp, const std::filesystem::path& filename)
                     );
                     image.addSample(x, y, c);
 
-                    progress.advance(1, false);
+                    progress.advance(1);
                 }
             });
 
@@ -101,7 +104,7 @@ void Renderer::render(size_t spp, const std::filesystem::path& filename)
         }
 
         spp_count += spp_in_one_pass;
-        spp_in_one_pass = std::min<size_t>(std::min<size_t>(2 * spp_in_one_pass, spp - spp_count), 32);
+        spp_in_one_pass = std::min<size_t>({2 * spp_in_one_pass, spp - spp_count, static_cast<unsigned long long>(32)});
         image.save(filename);
     }
 }

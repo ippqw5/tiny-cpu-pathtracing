@@ -1,0 +1,92 @@
+# clang-tidy static analysis configuration (LLVM 22.1.8)
+#
+# Reference: https://clang.llvm.org/extra/clang-tidy/
+#
+# Consumed by clangd (in-editor diagnostics) and by the standalone clang-tidy
+# binary. To run from the command line (picks up compile_commands.json):
+#     clang-tidy -p build src/main.cpp
+# or with auto-fixes:
+#     clang-tidy -p build --fix src/main.cpp
+
+# Enabled groups (only each module's default-enabled checks are switched on):
+#   clang-analyzer-*     dataflow / memory / security path analysis
+#   bugprone-*           common misuse patterns
+#   concurrency-*        threading issues
+#   performance-*        performance traps
+#   portability-*        portability pitfalls
+#   modernize-*          modern C++ idioms
+#   cppcoreguidelines-*  C++ Core Guidelines
+#   cert-*               secure-coding rules
+#   misc-*               misc. correctness
+#   readability-*        readability
+#
+# The `-...` entries below disable checks that are too strict, purely
+# stylistic, or clash with this project's style (numeric-heavy code, public
+# data members, short identifiers, camelCase methods + m_ members, etc.).
+# Numeric/GLM-specific disables: include-cleaner (duplicates clangd's include
+# diagnostics), pro-type-union-access (GLM .x/.y/.z union-style access),
+# narrowing-conversions (frequent float->int in a raytracer),
+# uppercase-literal-suffix (pedantic: `1.f` vs `1.F`).
+Checks: >
+  -*,
+  clang-analyzer-*,
+  bugprone-*,
+  concurrency-*,
+  performance-*,
+  portability-*,
+  modernize-*,
+  cppcoreguidelines-*,
+  cert-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -readability-magic-numbers,
+  -readability-function-cognitive-complexity,
+  -readability-uppercase-literal-suffix,
+  -cppcoreguidelines-avoid-do-while,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-narrowing-conversions,
+  -bugprone-narrowing-conversions,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-unintended-char-ostream-output,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+
+# Promote high-signal findings to errors (useful in CI to fail the build).
+# Keep empty for normal in-editor use.
+WarningsAsErrors: ''
+
+# Report diagnostics in project headers too (but not in `external/` or system
+# headers). The regex is matched (unanchored) against the header path.
+HeaderFilterRegex: 'include/.*'
+
+# Use `.clang-format` for any style-fixing a check performs with --fix.
+FormatStyle: file
+
+# Naming style per this project's conventions: PascalCase types, camelBack
+# methods, m_ + lower_case for PRIVATE/PROTECTED members only. Public data
+# members (POD-style structs like Sphere/Triangle) stay unprefixed, so we use
+# the per-access-specifier options instead of the general MemberCase/
+# MemberPrefix (which would force m_ on public members too).
+CheckOptions:
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.MethodCase
+    value: camelBack
+  - key: readability-identifier-naming.VariableCase
+    value: lower_case
+  - key: readability-identifier-naming.PublicMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: 'm_'
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ProtectedMemberPrefix
+    value: 'm_'
+  - key: readability-identifier-naming.ProtectedMemberCase
+    value: lower_case
+  - key: readability-identifier-naming.ParameterCase
+    value: lower_case
+  - key: readability-identifier-naming.EnumConstantCase
+    value: CamelCase

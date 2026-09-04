@@ -9,17 +9,10 @@ namespace tcpr
 class Progress
 {
 public:
-    enum class Style
-    {
-        InlineDots,
-        PerLine,
-    };
-
     explicit Progress(
         size_t      total,
         std::string label = "Render Progress",
-        size_t      segments = 10,
-        Style       style = Style::InlineDots
+        size_t      segments = 10
     );
 
     ~Progress();
@@ -29,18 +22,17 @@ public:
     Progress(Progress&&) = delete;
     Progress& operator=(Progress&&) = delete;
 
-    void advance(size_t delta = 1, bool print_segment = true);
+    void advance(size_t delta = 1, bool print_on = true);
 
     void finish();
 
 private:
-    void printSegmentLine(size_t segment, bool final_newline = false);
+    void printSegmentLine(size_t segment);
 
     std::string m_label;
     size_t      m_total;
     size_t      m_segments;
     size_t      m_step;
-    Style       m_style;
 
     std::atomic<size_t> m_current;
     long long           m_last_segment;

@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
+# Default build type for bare `cmake ..` runs; does not override the
+# CMAKE_BUILD_TYPE passed on the command line (e.g. by CMake Tools variants).
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
 
 project(
     TinyCPUPathTracing
@@ -9,6 +13,7 @@ project(
 )
 
 add_subdirectory(external/glm)
+add_subdirectory(external/spdlog)
 
 file(GLOB_RECURSE src_files CONFIGURE_DEPENDS src/*.cpp)
 add_executable(TinyCPUPathTracing ${src_files})
@@ -28,4 +33,4 @@ target_compile_definitions(TinyCPUPathTracing PRIVATE
 
 target_include_directories(TinyCPUPathTracing PUBLIC include)
 target_precompile_headers(TinyCPUPathTracing PRIVATE "include/util/common.h")
-target_link_libraries(TinyCPUPathTracing glm)
+target_link_libraries(TinyCPUPathTracing glm spdlog::spdlog)

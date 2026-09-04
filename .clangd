@@ -1,0 +1,56 @@
+# clangd project configuration (LLVM 22.1.8)
+#
+# Reference: https://clangd.llvm.org/config
+#
+# clangd discovers this file in the project tree (or a parent directory) and
+# merges it with your user config (%LocalAppData%\clangd\config.yaml on
+# Windows). It consumes `build/compile_commands.json` (from CMake) for exact
+# include paths, defines and build flags.
+
+CompileFlags:
+  # Appended on top of the flags in compile_commands.json. Guarantees C++20
+  # parsing even for files absent from the compilation database.
+  Add: [-std=c++20]
+
+Index:
+  # Background-index the whole project for fast cross-file navigation.
+  Background: Build
+  # Eagerly index the standard library so STL symbols complete on empty files.
+  StandardLibrary: true
+
+Diagnostics:
+  # Report unused #include directives (default since clangd 17 is Strict).
+  UnusedIncludes: None
+  # Report missing #include directives (default None).
+  # MissingIncludes: Strict
+
+  # clang-tidy check configuration lives in `.clang-tidy`; clangd merges it
+  # automatically. clang-tidy diagnostics are enabled by default (`--clang-tidy`
+  # defaults to true); disable them by passing `--clang-tidy=false` to clangd.
+  # The `ClangTidy` block below only tunes options, it is not an on/off switch.
+  ClangTidy:
+    FastCheckFilter: Loose   # Strict (default) skips checks deemed slow;
+                             # Loose runs more (slower) checks
+
+Completion:
+  AllScopes: true
+  ArgumentLists: FullPlaceholders   # complete `foo(int arg)` with placeholders
+  HeaderInsertion: IWYU             # insert the owning #include on completion
+  MacroFilter: FuzzyMatch           # fuzzy-match macros during completion
+
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true
+  Designators: true
+  BlockEnd: false
+  DefaultArguments: false
+  TypeNameLimit: 24
+
+Hover:
+  ShowAKA: true   # show desugared types, e.g. `value_type` -> `(aka int)`
+
+Documentation:
+  # Render /** ... */ comments as Markdown. This project uses pure-Markdown
+  # comments, so hover documentation shows headings, bullet lists, etc.
+  CommentFormat: Markdown

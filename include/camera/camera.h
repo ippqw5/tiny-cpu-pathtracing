@@ -1,5 +1,5 @@
-#ifndef __CAMERA_H__
-#define __CAMERA_H__
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include "../util/common.h"
 #include "./image.h"
@@ -26,10 +26,10 @@ private:
     glm::vec3 m_viewpoint;
     float     m_fovy;
 
-    glm::mat4 m_camera_from_clip;
-    glm::mat4 m_world_from_camera;
+    glm::mat4 m_camera_from_clip{};
+    glm::mat4 m_world_from_camera{};
 };
 
 } // namespace tcpr
 
-#endif // __CAMERA_H__
+#endif // CAMERA_H

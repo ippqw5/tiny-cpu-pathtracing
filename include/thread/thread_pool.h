@@ -1,5 +1,5 @@
-#ifndef __THREAD_POOL_H__
-#define __THREAD_POOL_H__
+#ifndef THREAD_POOL_H
+#define THREAD_POOL_H
 
 #include "../util/common.h"
 
@@ -48,4 +48,4 @@ private:
 };
 } // namespace tcpr
 
-#endif // __THREAD_POOL_H__
+#endif // THREAD_POOL_H

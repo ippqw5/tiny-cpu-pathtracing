@@ -8,7 +8,7 @@ void ThreadPool::Entry(ThreadPool* master)
     while (master->m_alive)
     {
         Task* task = master->getTask();
-        if (task)
+        if (task != nullptr)
         {
             task->run();
             master->m_pending_task_count--;
@@ -20,10 +20,10 @@ void ThreadPool::Entry(ThreadPool* master)
     }
 }
 
-ThreadPool::ThreadPool(size_t thread_count)
+ThreadPool::ThreadPool(size_t thread_count) : m_alive(true), m_pending_task_count(0)
 {
-    m_alive = true;
-    m_pending_task_count = 0;
+    
+    
     if (thread_count == 0)
     {
         // set to the maximum of hardware cores
@@ -32,7 +32,7 @@ ThreadPool::ThreadPool(size_t thread_count)
 
     for (size_t i = 0; i < thread_count; i++)
     {
-        m_threads.push_back(std::thread(ThreadPool::Entry, this));
+        m_threads.emplace_back(ThreadPool::Entry, this);
     }
 }
 
@@ -52,18 +52,19 @@ ThreadPool::~ThreadPool()
 class ParallelForTask : public Task
 {
 public:
-    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& lambda) : x(x), y(y), lambda(lambda)
+virtual ~ParallelForTask() = default;
+    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& lambda) : m_x(x), m_y(y), m_lambda(lambda)
     {
     }
 
     void run() override
     {
-        lambda(x, y);
+        m_lambda(m_x, m_y);
     }
 
 private:
-    size_t                              x, y;
-    std::function<void(size_t, size_t)> lambda;
+    size_t                              m_x, m_y;
+    std::function<void(size_t, size_t)> m_lambda;
 };
 
 void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda)
@@ -95,8 +96,9 @@ void ThreadPool::addTask(Task* task)
 Task* ThreadPool::getTask()
 {
     std::lock_guard<std::mutex> guard(m_lock);
-    if (m_tasks.empty())
+    if (m_tasks.empty()) {
         return nullptr;
+}
 
     Task* task = m_tasks.front();
     m_tasks.pop();

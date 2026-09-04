@@ -1,19 +1,28 @@
-#ifndef __SHAPE_H__
-#define __SHAPE_H__
+#ifndef SHAPE_H
+#define SHAPE_H
 
 #include "../camera/ray.h"
 #include "../util/common.h"
-
 
 namespace tcpr
 {
 
 struct Shape
 {
-    virtual std::optional<HitInfo> intersect(
+    // Rule of five: declaring the virtual dtor requires declaring the rest.
+    // Shape is abstract (pure virtual), so copy/move can never slice and are
+    // safe to keep public + defaulted for derived classes that need them.
+    Shape() = default;
+    Shape(const Shape&) = default;
+    Shape& operator=(const Shape&) = default;
+    Shape(Shape&&) = default;
+    Shape& operator=(Shape&&) = default;
+    virtual ~Shape() = default;
+
+    [[nodiscard]] virtual std::optional<HitInfo> intersect(
         const Ray& ray,
-        float      tMin,
-        float      tMax
+        float      t_min,
+        float      t_max
     ) const = 0;
 };
 
@@ -23,10 +32,10 @@ struct Sphere : public Shape
     {
     }
 
-    std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
+    [[nodiscard]] std::optional<HitInfo> intersect(const Ray& ray, float t_min, float t_max) const override;
 
-    glm::vec3 center;
-    float     radius;
+    glm::vec3 center{};
+    float     radius{};
 };
 
 struct Triangle : public Shape
@@ -46,10 +55,10 @@ struct Triangle : public Shape
     {
     }
 
-    std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
+    [[nodiscard]] std::optional<HitInfo> intersect(const Ray& ray, float t_min, float t_max) const override;
 
-    glm::vec3 p0, p1, p2;
-    glm::vec3 n0, n1, n2;
+    glm::vec3 p0{}, p1{}, p2{};
+    glm::vec3 n0{}, n1{}, n2{};
 };
 
 struct Plane : public Shape
@@ -58,12 +67,12 @@ struct Plane : public Shape
     {
     }
 
-    std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
+    [[nodiscard]] std::optional<HitInfo> intersect(const Ray& ray, float t_min, float t_max) const override;
 
-    glm::vec3 p;
-    glm::vec3 n;
+    glm::vec3 p{};
+    glm::vec3 n{};
 };
 
 } // namespace tcpr
 
-#endif // __SHAPE_H__
+#endif // SHAPE_H

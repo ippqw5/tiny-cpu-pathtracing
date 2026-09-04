@@ -23,7 +23,7 @@ Ray Camera::generateRay(const glm::ivec2& pixel_coord, const glm::vec2& offset) 
 
     glm::vec3 world_coord = m_world_from_camera * m_camera_from_clip * clip_coord;
 
-    return Ray(m_pos, glm::normalize(world_coord - m_pos));
+    return {m_pos, glm::normalize(world_coord - m_pos)};
 }
 
 } // namespace tcpr

@@ -1,5 +1,5 @@
-#ifndef __FRAME_H__
-#define __FRAME_H__
+#ifndef FRAME_H
+#define FRAME_H
 
 #include "./common.h"
 
@@ -16,9 +16,9 @@ public:
     glm::vec3 toWorld(const glm::vec3& v_in_local) const;
 
 private:
-    glm::vec3 x_axis, y_axis, z_axis;
+    glm::vec3 x_axis{}, y_axis{}, z_axis{};
 };
 
 } // namespace tcpr
 
-#endif // __FRAME_H__
+#endif // FRAME_H

@@ -1,5 +1,5 @@
-#ifndef __RAY_H__
-#define __RAY_H__
+#ifndef RAY_H
+#define RAY_H
 
 #include "../shape/material.h"
 #include "../util/common.h"
@@ -35,4 +35,4 @@ struct HitInfo
 
 } // namespace tcpr
 
-#endif // __RAY_H__
+#endif // RAY_H

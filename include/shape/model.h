@@ -1,5 +1,5 @@
-#ifndef __MODEL_H__
-#define __MODEL_H__
+#ifndef MODEL_H
+#define MODEL_H
 
 #include "../camera/ray.h"
 #include "../util/common.h"
@@ -16,9 +16,9 @@ public:
     {
     }
 
-    Model(const std::filesystem::path& filename);
+    Model(const std::filesystem::path& path);
 
-    std::optional<HitInfo> intersect(const Ray& ray, float tMin, float tMax) const override;
+    std::optional<HitInfo> intersect(const Ray& ray, float t_min, float t_max) const override;
 
 private:
     std::vector<Triangle> m_triangles;
@@ -26,4 +26,4 @@ private:
 
 } // namespace tcpr
 
-#endif // __MODEL_H__
+#endif // MODEL_H

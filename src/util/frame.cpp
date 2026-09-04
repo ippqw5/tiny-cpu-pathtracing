@@ -3,9 +3,9 @@
 namespace tcpr
 {
 
-Frame::Frame(const glm::vec3& normal)
+Frame::Frame(const glm::vec3& normal) : y_axis(normal)
 {
-    y_axis = normal;
+    
 
     glm::vec3 up = glm::abs(y_axis.y) < 0.999f ? glm::vec3{0.f, 1.f, 0.f} : glm::vec3{0.f, 0.f, 1.f};
 
