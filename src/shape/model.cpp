@@ -8,50 +8,74 @@ namespace tcpr
 Model::Model(const std::filesystem::path& path)
 {
     PROFILE_SCOPE("Model::Model(" + path.string() + ")");
-    std::vector<glm::vec3> positions;
-    std::vector<glm::vec3> normals;
 
-    std::ifstream file(path);
-    if (!file.is_open())
+    rapidobj::Result result = rapidobj::ParseFile(path);
+    if (result.error)
     {
-        throw std::runtime_error("Failed to open file: " + path.string());
+        throw std::runtime_error("Failed to load file: " + path.string() + " (" + result.error.code.message() + ")");
+    }
+    if (!rapidobj::Triangulate(result))
+    {
+        throw std::runtime_error("Failed to triangulate: " + path.string());
     }
 
-    std::string line;
-    char        trash = 0;
-    while (!file.eof())
-    {
-        std::getline(file, line);
-        std::istringstream iss(line);
+    const auto& positions = result.attributes.positions;
+    const auto& normals = result.attributes.normals;
 
-        if (line.starts_with("v "))
+    auto to_vec3 = [](const rapidobj::Array<float>& arr, int index) {
+        return glm::vec3{arr[3 * index], arr[3 * index + 1], arr[3 * index + 2]};
+    };
+
+    for (const auto& shape : result.shapes)
+    {
+        const auto& mesh = shape.mesh;
+        // after Triangulate, indices come in groups of three
+        for (size_t i = 0; i < mesh.indices.size(); i += 3)
         {
-            glm::vec3 position;
-            iss >> trash >> position.x >> position.y >> position.z;
-            positions.push_back(position);
+            const auto& i0 = mesh.indices[i];
+            const auto& i1 = mesh.indices[i + 1];
+            const auto& i2 = mesh.indices[i + 2];
+
+            const glm::vec3 p0 = to_vec3(positions, i0.position_index);
+            const glm::vec3 p1 = to_vec3(positions, i1.position_index);
+            const glm::vec3 p2 = to_vec3(positions, i2.position_index);
+
+            if (i0.normal_index >= 0)
+            {
+                m_triangles.emplace_back(p0, p1, p2,
+                                         to_vec3(normals, i0.normal_index),
+                                         to_vec3(normals, i1.normal_index),
+                                         to_vec3(normals, i2.normal_index));
+            }
+            else
+            {
+                // no vertex normals: the 3-point ctor computes a flat normal
+                m_triangles.emplace_back(p0, p1, p2);
+            }
         }
-        else if (line.starts_with("vn "))
-        {
-            glm::vec3 normal;
-            iss >> trash >> trash >> normal.x >> normal.y >> normal.z;
-            normals.push_back(normal);
-        }
-        else if (line.starts_with("f "))
-        {
-            glm::ivec3 idx_v;
-            glm::ivec3 idx_vn;
-            iss >> trash;
-            iss >> idx_v.x >> trash >> trash >> idx_vn.x;
-            iss >> idx_v.y >> trash >> trash >> idx_vn.y;
-            iss >> idx_v.z >> trash >> trash >> idx_vn.z;
-            m_triangles.emplace_back(positions[idx_v.x - 1], positions[idx_v.y - 1], positions[idx_v.z - 1],
-                                           normals[idx_vn.x - 1], normals[idx_vn.y - 1], normals[idx_vn.z - 1]);
-        }
+    }
+
+    build();
+}
+
+void Model::build()
+{
+    m_aabb = AABB{};
+    for (const auto& tri : m_triangles)
+    {
+        m_aabb.expand(tri.p0);
+        m_aabb.expand(tri.p1);
+        m_aabb.expand(tri.p2);
     }
 }
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max) const
 {
+    if (!m_aabb.intersect(ray, t_min, t_max))
+    {
+        return std::nullopt;
+    }
+
     std::optional<HitInfo> closest_hit_info{};
     for (const auto& tri : m_triangles)
     {

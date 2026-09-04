@@ -9,7 +9,20 @@ namespace tcpr
 class Task
 {
 public:
+    virtual ~Task() = default;
+
     virtual void run() = 0;
+
+    /**
+     * Destroy the task object once it has finished running.
+     *
+     * Default implementation: `delete this`.
+     * Override to customize lifetime management (e.g. return the task to a pool).
+     */
+    virtual void destroy()
+    {
+        delete this;
+    }
 };
 
 class ThreadPool
@@ -22,16 +35,18 @@ public:
         return instance;
     }
 
-    ThreadPool(const ThreadPool&)            = delete;
+    ThreadPool(const ThreadPool&) = delete;
     ThreadPool& operator=(const ThreadPool&) = delete;
-    ThreadPool(ThreadPool&&)                 = delete;
-    ThreadPool& operator=(ThreadPool&&)      = delete;
+    ThreadPool(ThreadPool&&) = delete;
+    ThreadPool& operator=(ThreadPool&&) = delete;
 
     ~ThreadPool();
 
     static void Entry(ThreadPool* master);
 
-    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda);
+    /** Run `lambda(x, y)` for the whole area, one task per `chunk_size x chunk_size` block. */
+    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda,
+                     size_t chunk_size = 32);
     void wait() const;
 
     void  addTask(Task* task);

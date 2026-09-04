@@ -53,7 +53,7 @@ int main()
     tcpr::Renderer renderer{camera, scene};
 
     const std::string filename = "test.ppm";
-    renderer.render(1, filename);
+    renderer.render(32, filename);
 
     return 0;
 }

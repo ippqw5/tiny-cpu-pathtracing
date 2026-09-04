@@ -11,6 +11,7 @@ void ThreadPool::Entry(ThreadPool* master)
         if (task != nullptr)
         {
             task->run();
+            task->destroy();
             master->m_pending_task_count--;
         }
         else
@@ -22,8 +23,7 @@ void ThreadPool::Entry(ThreadPool* master)
 
 ThreadPool::ThreadPool(size_t thread_count) : m_alive(true), m_pending_task_count(0)
 {
-    
-    
+
     if (thread_count == 0)
     {
         // set to the maximum of hardware cores
@@ -49,31 +49,55 @@ ThreadPool::~ThreadPool()
     m_threads.clear();
 }
 
+/**
+ * A task covering a 2D rectangular chunk of pixels: `[x_begin, x_end) x [y_begin, y_end)`.
+ *
+ * On `run()`, the lambda is invoked once for every pixel in the chunk,
+ * so one task replaces `chunk_size * chunk_size` per-pixel tasks.
+ */
 class ParallelForTask : public Task
 {
 public:
-virtual ~ParallelForTask() = default;
-    ParallelForTask(size_t x, size_t y, const std::function<void(size_t, size_t)>& lambda) : m_x(x), m_y(y), m_lambda(lambda)
+    ParallelForTask(size_t x_begin, size_t x_end, size_t y_begin, size_t y_end, const std::function<void(size_t, size_t)>& lambda)
+        : m_x_begin(x_begin), m_x_end(x_end), m_y_begin(y_begin), m_y_end(y_end), m_lambda(lambda)
     {
     }
 
     void run() override
     {
-        m_lambda(m_x, m_y);
+        for (size_t x = m_x_begin; x < m_x_end; x++)
+        {
+            for (size_t y = m_y_begin; y < m_y_end; y++)
+            {
+                m_lambda(x, y);
+            }
+        }
     }
 
 private:
-    size_t                              m_x, m_y;
+    size_t                              m_x_begin, m_x_end;
+    size_t                              m_y_begin, m_y_end;
     std::function<void(size_t, size_t)> m_lambda;
 };
 
-void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda)
+void ThreadPool::parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda, size_t chunk_size)
 {
-    for (size_t x = 0; x < width; x++)
+    // ceiling division: chunks per axis (edge chunks may be smaller)
+    const size_t chunk_x_count = (width + chunk_size - 1) / chunk_size;
+    const size_t chunk_y_count = (height + chunk_size - 1) / chunk_size;
+
+    for (size_t chunk_y = 0; chunk_y < chunk_y_count; chunk_y++)
     {
-        for (size_t y = 0; y < height; y++)
+        for (size_t chunk_x = 0; chunk_x < chunk_x_count; chunk_x++)
         {
-            addTask(new ParallelForTask(x, y, lambda));
+            const size_t x_begin = chunk_x * chunk_size;
+            const size_t y_begin = chunk_y * chunk_size;
+
+            addTask(new ParallelForTask(
+                x_begin, std::min(x_begin + chunk_size, width),
+                y_begin, std::min(y_begin + chunk_size, height),
+                lambda
+            ));
         }
     }
 }
@@ -96,9 +120,10 @@ void ThreadPool::addTask(Task* task)
 Task* ThreadPool::getTask()
 {
     std::lock_guard<std::mutex> guard(m_lock);
-    if (m_tasks.empty()) {
+    if (m_tasks.empty())
+    {
         return nullptr;
-}
+    }
 
     Task* task = m_tasks.front();
     m_tasks.pop();

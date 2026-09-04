@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "renderer/renderer.h"
 #include "thread/thread_pool.h"
 #include "util/frame.h"

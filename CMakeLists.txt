@@ -14,6 +14,7 @@ project(
 
 add_subdirectory(external/glm)
 add_subdirectory(external/spdlog)
+add_subdirectory(external/rapidobj)
 
 file(GLOB_RECURSE src_files CONFIGURE_DEPENDS src/*.cpp)
 add_executable(TinyCPUPathTracing ${src_files})
@@ -29,8 +30,10 @@ target_compile_definitions(TinyCPUPathTracing PRIVATE
     GLM_FORCE_RADIANS
     GLM_FORCE_DEPTH_ZERO_TO_ONE
     GLM_FORCE_LEFT_HANDED
+    # windows.h defines RGB(), which collides with our RGB class
+    NOGDI
 )
 
 target_include_directories(TinyCPUPathTracing PUBLIC include)
 target_precompile_headers(TinyCPUPathTracing PRIVATE "include/util/common.h")
-target_link_libraries(TinyCPUPathTracing glm spdlog::spdlog)
+target_link_libraries(TinyCPUPathTracing glm spdlog::spdlog rapidobj::rapidobj)

@@ -52,6 +52,7 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-unintended-char-ostream-output,
   -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
 
 # Promote high-signal findings to errors (useful in CI to fail the build).
 # Keep empty for normal in-editor use.
