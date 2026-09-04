@@ -5,7 +5,14 @@
 namespace tcpr
 {
 
-Model::Model(const std::filesystem::path& path)
+Model::Model(const std::vector<Triangle>& triangles, AccelType accel_type)
+    : m_accel(createAccel(accel_type))
+{
+    m_accel->build(triangles);
+}
+
+Model::Model(const std::filesystem::path& path, AccelType accel_type)
+    : m_accel(createAccel(accel_type))
 {
     PROFILE_SCOPE("Model::Model(" + path.string() + ")");
 
@@ -26,6 +33,7 @@ Model::Model(const std::filesystem::path& path)
         return glm::vec3{arr[3 * index], arr[3 * index + 1], arr[3 * index + 2]};
     };
 
+    std::vector<Triangle> triangles;
     for (const auto& shape : result.shapes)
     {
         const auto& mesh = shape.mesh;
@@ -42,51 +50,25 @@ Model::Model(const std::filesystem::path& path)
 
             if (i0.normal_index >= 0)
             {
-                m_triangles.emplace_back(p0, p1, p2,
-                                         to_vec3(normals, i0.normal_index),
-                                         to_vec3(normals, i1.normal_index),
-                                         to_vec3(normals, i2.normal_index));
+                triangles.emplace_back(p0, p1, p2,
+                                       to_vec3(normals, i0.normal_index),
+                                       to_vec3(normals, i1.normal_index),
+                                       to_vec3(normals, i2.normal_index));
             }
             else
             {
                 // no vertex normals: the 3-point ctor computes a flat normal
-                m_triangles.emplace_back(p0, p1, p2);
+                triangles.emplace_back(p0, p1, p2);
             }
         }
     }
 
-    build();
-}
-
-void Model::build()
-{
-    m_aabb = AABB{};
-    for (const auto& tri : m_triangles)
-    {
-        m_aabb.expand(tri.p0);
-        m_aabb.expand(tri.p1);
-        m_aabb.expand(tri.p2);
-    }
+    m_accel->build(triangles);
 }
 
 std::optional<HitInfo> Model::intersect(const Ray& ray, float t_min, float t_max) const
 {
-    if (!m_aabb.intersect(ray, t_min, t_max))
-    {
-        return std::nullopt;
-    }
-
-    std::optional<HitInfo> closest_hit_info{};
-    for (const auto& tri : m_triangles)
-    {
-        auto hit_info = tri.intersect(ray, t_min, t_max);
-        if (hit_info.has_value())
-        {
-            t_max = hit_info->t;
-            closest_hit_info = hit_info;
-        }
-    }
-    return closest_hit_info;
+    return m_accel->intersect(ray, t_min, t_max);
 }
 
 } // namespace tcpr

@@ -18,3 +18,5 @@ C++ coding rules for this project. Read before writing or modifying code.
 
 - Only add comments if necessary (non-obvious logic, intent, or rationale).
 - Keep comments simple, clear, and easy to understand.
+- Use `//` for single-line comments (including one-line documentation).
+  Use `/** ... */` only for multi-line documentation blocks.

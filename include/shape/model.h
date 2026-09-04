@@ -1,7 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "../accel/aabb.h"
+#include "../accel/accel.h"
 #include "../camera/ray.h"
 #include "../util/common.h"
 #include "./shape.h"
@@ -9,24 +9,21 @@
 namespace tcpr
 {
 
+/**
+ * Triangle mesh loaded from an OBJ file, accelerated by an `Accel` structure.
+ * The acceleration implementation is selectable at construction time via `accel_type`.
+ */
 class Model : public Shape
 {
 public:
-    Model(const std::vector<Triangle>& triangles) : m_triangles(triangles)
-    {
-        build();
-    }
+    Model(const std::vector<Triangle>& triangles, AccelType accel_type = AccelType::Madmann);
 
-    Model(const std::filesystem::path& path);
-
-    /** Rebuild `m_aabb` from all triangle vertices. */
-    void build();
+    Model(const std::filesystem::path& path, AccelType accel_type = AccelType::Madmann);
 
     std::optional<HitInfo> intersect(const Ray& ray, float t_min, float t_max) const override;
 
 private:
-    std::vector<Triangle> m_triangles;
-    AABB                  m_aabb;
+    std::unique_ptr<Accel> m_accel;
 };
 
 } // namespace tcpr

@@ -44,9 +44,8 @@ public:
 
     static void Entry(ThreadPool* master);
 
-    /** Run `lambda(x, y)` for the whole area, one task per `chunk_size x chunk_size` block. */
-    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda,
-                     size_t chunk_size = 32);
+    // Run `lambda(x, y)` for the whole area, one task per `chunk_size x chunk_size` block.
+    void parallelFor(size_t width, size_t height, const std::function<void(size_t, size_t)>& lambda, size_t chunk_size = 32);
     void wait() const;
 
     void  addTask(Task* task);

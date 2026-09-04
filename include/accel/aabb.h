@@ -15,7 +15,7 @@ struct AABB
 {
     void expand(const glm::vec3& point);
 
-    /** Slab-method ray-box test within `[t_min, t_max]`. */
+    // Slab-method ray-box test within `[t_min, t_max]`.
     [[nodiscard]] bool intersect(const Ray& ray, float t_min, float t_max) const;
 
     glm::vec3 min{std::numeric_limits<float>::infinity()};

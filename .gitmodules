@@ -7,3 +7,6 @@
 [submodule "external/rapidobj"]
 	path = external/rapidobj
 	url = https://github.com/guybrush77/rapidobj.git
+[submodule "external/bvh"]
+	path = external/bvh
+	url = https://github.com/madmann91/bvh.git
