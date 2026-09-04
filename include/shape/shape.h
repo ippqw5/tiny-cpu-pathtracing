@@ -1,8 +1,9 @@
 #ifndef __SHAPE_H__
 #define __SHAPE_H__
 
-#include "common.h"
-#include "ray.h"
+#include "../camera/ray.h"
+#include "../util/common.h"
+
 
 namespace tcpr
 {

@@ -26,5 +26,5 @@ target_compile_definitions(TinyCPUPathTracing PRIVATE
 )
 
 target_include_directories(TinyCPUPathTracing PUBLIC include)
-target_precompile_headers(TinyCPUPathTracing PRIVATE "include/common.h")
+target_precompile_headers(TinyCPUPathTracing PRIVATE "include/util/common.h")
 target_link_libraries(TinyCPUPathTracing glm)

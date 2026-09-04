@@ -1,5 +1,5 @@
-#include "model.h"
-#include "shape.h"
+#include "shape/model.h"
+#include "shape/shape.h"
 
 namespace tcpr
 {

@@ -1,7 +1,8 @@
-#include "thread_pool.h"
+#include "thread/thread_pool.h"
 
 namespace tcpr
 {
+
 void ThreadPool::Entry(ThreadPool* master)
 {
     while (master->m_alive)

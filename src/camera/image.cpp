@@ -1,5 +1,5 @@
-#include "image.h"
-#include "rgb.h"
+#include "camera/image.h"
+#include "util/rgb.h"
 
 namespace tcpr
 {

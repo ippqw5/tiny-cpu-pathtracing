@@ -1,5 +1,5 @@
-#include "shape.h"
-#include "ray.h"
+#include "shape/shape.h"
+#include "camera/ray.h"
 
 namespace tcpr
 {

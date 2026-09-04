@@ -1,4 +1,4 @@
-#include "scene.h"
+#include "shape/scene.h"
 
 namespace tcpr
 {

@@ -1,9 +1,10 @@
 #ifndef __MODEL_H__
 #define __MODEL_H__
 
-#include "common.h"
-#include "ray.h"
-#include "shape.h"
+#include "../camera/ray.h"
+#include "../util/common.h"
+#include "./shape.h"
+
 
 namespace tcpr
 {

@@ -1,8 +1,8 @@
 #ifndef __SCENE_H__
 #define __SCENE_H__
 
-#include "common.h"
-#include "shape.h"
+#include "../util/common.h"
+#include "./shape.h"
 
 namespace tcpr
 {
