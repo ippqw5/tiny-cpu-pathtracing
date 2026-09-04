@@ -1,6 +1,7 @@
 #include "renderer/renderer.h"
 #include "thread/thread_pool.h"
 #include "util/frame.h"
+#include "util/profile.h"
 #include "util/progress.h"
 
 namespace tcpr
@@ -66,38 +67,41 @@ glm::vec3 Renderer::renderPixel(glm::ivec2 pixel_coord, RNG& rng)
 
 void Renderer::render(size_t spp, const std::filesystem::path& filename)
 {
+    PROFILE_SCOPE("Renderer::render(" + std::to_string(spp) + ", " + filename.string() + ")");
+
     Image& image = m_camera.getImage();
 
     const size_t width = image.getWidth();
     const size_t height = image.getHeight();
     const size_t progress_total = width * height * spp;
 
-    // 进度条实例：构造函数即打印 "Render Progress: 0%"，析构/finish() 补打 100% 并换行
     Progress progress(progress_total, "Render Progress", 10);
 
     size_t spp_count = 0, spp_in_one_pass = 1;
     while (spp_count < spp)
     {
-        ThreadPool::getInstance().parallelFor(width, height, [&](size_t x, size_t y) {
-            thread_local RNG rng{12345, -1.f, 1.f};
+        {
+            PROFILE_SCOPE("Renderer::render() - spp_in_one_pass = " + std::to_string(spp_in_one_pass));
+            ThreadPool::getInstance().parallelFor(width, height, [&](size_t x, size_t y) {
+                thread_local RNG rng{12345, -1.f, 1.f};
 
-            for (size_t i = 0; i < spp_in_one_pass; i++)
-            {
-                glm::vec3 c = renderPixel(
-                    {static_cast<int>(x), static_cast<int>(y)},
-                    rng
-                );
-                image.addSample(x, y, c);
+                for (size_t i = 0; i < spp_in_one_pass; i++)
+                {
+                    glm::vec3 c = renderPixel(
+                        {static_cast<int>(x), static_cast<int>(y)},
+                        rng
+                    );
+                    image.addSample(x, y, c);
 
-                // 原子 +1；每次跨过 10% 边界时 Progress 内部用 \r 覆盖刷新同一行
-                progress.advance(1);
-            }
-        });
+                    progress.advance(1, false);
+                }
+            });
 
-        ThreadPool::getInstance().wait();
+            ThreadPool::getInstance().wait();
+        }
 
         spp_count += spp_in_one_pass;
-        spp_in_one_pass = std::min<size_t>(std::min<size_t>(spp_count, spp - spp_count), 32);
+        spp_in_one_pass = std::min<size_t>(std::min<size_t>(2 * spp_in_one_pass, spp - spp_count), 32);
         image.save(filename);
     }
 }

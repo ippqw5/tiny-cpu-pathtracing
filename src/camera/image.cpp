@@ -1,4 +1,5 @@
 #include "camera/image.h"
+#include "util/profile.h"
 #include "util/rgb.h"
 
 namespace tcpr
@@ -10,6 +11,8 @@ Image::Image(size_t width, size_t height) : m_width(width), m_height(height)
 
 void Image::save(const std::filesystem::path& filename)
 {
+    PROFILE_SCOPE("Image::save(" + filename.string() + ")");
+
     std::ofstream file(filename, std::ios::binary);
     // PPM
     file << "P6\n"

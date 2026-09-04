@@ -62,8 +62,7 @@ int main()
     tcpr::Renderer renderer{camera, scene};
 
     const std::string filename = "test.ppm";
-    renderer.render(32, filename);
+    renderer.render(1, filename);
 
-    std::cout << "Image saved to " << filename << std::endl;
     return 0;
 }

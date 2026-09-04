@@ -1,11 +1,13 @@
 #include "shape/model.h"
 #include "shape/shape.h"
+#include "util/profile.h"
 
 namespace tcpr
 {
 
 Model::Model(const std::filesystem::path& path)
 {
+    PROFILE_SCOPE("Model::Model(" + path.string() + ")");
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> normals;
 
