@@ -30,6 +30,10 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "RelWithDebInfo"
             }
+        },
+        {
+            "name": "default",
+            "inherits": "My RelWithDebInfo"
         }
     ]
 }
