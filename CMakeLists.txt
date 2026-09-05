@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#Default build                          type for bare `cmake..` runs; does not override the
-#CMAKE_BUILD_TYPE passed on the command line(e.g.by CMake Tools variants).
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()

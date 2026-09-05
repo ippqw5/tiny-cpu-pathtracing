@@ -1,6 +1,6 @@
 # Tiny CPU Path Tracing Renderer
 
-A simple, lightweight path tracing renderer implemented in C++ that runs on the CPU.
+A simple, CPU path tracing renderer implemented using C++ 20. 
 
 ## Build
 
