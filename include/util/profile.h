@@ -3,7 +3,11 @@
 
 #include "./common.h"
 
+#ifdef PROFILE_ON
 #define PROFILE_SCOPE(name) tcpr::Profile __profile(name)
+#else
+#define PROFILE_SCOPE(name)
+#endif
 
 namespace tcpr
 {

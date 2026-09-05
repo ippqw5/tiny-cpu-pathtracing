@@ -15,6 +15,8 @@ enum class AccelType
     AABB,
     // madmann91/bvh v2 SAH-built binary BVH (high performance).
     Madmann,
+    // jbikker/tinybvh binned SAH BVH with SSE/AVX traversal.
+    Tinybvh,
 };
 
 /**

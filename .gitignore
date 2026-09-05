@@ -1,5 +1,7 @@
 build/
+out/
 .cache/
 .vscode/
 *.ppm
 *.log
+*.sh

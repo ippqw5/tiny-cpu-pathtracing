@@ -21,19 +21,31 @@ add_executable(TinyCPUPathTracing ${src_files})
 
 # enable compile warnings
 if(MSVC)
-    target_compile_options(TinyCPUPathTracing PRIVATE /W4)
+    target_compile_options(TinyCPUPathTracing PRIVATE /W4 /arch:AVX2)
 else()
-    target_compile_options(TinyCPUPathTracing PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(TinyCPUPathTracing PRIVATE -Wall -Wextra -Wpedantic -mavx2 -mfma)
 endif()
 
 target_compile_definitions(TinyCPUPathTracing PRIVATE
     GLM_FORCE_RADIANS
     GLM_FORCE_DEPTH_ZERO_TO_ONE
     GLM_FORCE_LEFT_HANDED
+
     # windows.h defines RGB(), which collides with our RGB class
     NOGDI
 )
 
+# Cache var set in preset -> preprocessor macro
+if(PROFILE_ON)
+    target_compile_definitions(TinyCPUPathTracing PRIVATE PROFILE_ON)
+endif()
+
 target_include_directories(TinyCPUPathTracing PUBLIC include)
+target_include_directories(TinyCPUPathTracing PRIVATE external/tinybvh)
 target_precompile_headers(TinyCPUPathTracing PRIVATE "include/util/common.h")
+
+# tinybvh_impl.cpp compiles the single-header library's implementation; it must
+# define TINYBVH_IMPLEMENTATION before including tiny_bvh.h, so it skips the PCH.
+set_source_files_properties(src/accel/tinybvh_impl.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
+
 target_link_libraries(TinyCPUPathTracing glm spdlog::spdlog rapidobj::rapidobj bvh)

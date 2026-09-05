@@ -10,3 +10,6 @@
 [submodule "external/bvh"]
 	path = external/bvh
 	url = https://github.com/madmann91/bvh.git
+[submodule "external/tinybvh"]
+	path = external/tinybvh
+	url = https://github.com/jbikker/tinybvh.git

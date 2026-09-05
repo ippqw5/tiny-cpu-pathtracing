@@ -5,6 +5,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstddef>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -43,5 +44,7 @@
 #include <bvh/v2/thread_pool.h>
 #include <bvh/v2/tri.h>
 #include <bvh/v2/vec.h>
+
+#include "tiny_bvh.h"
 
 #endif // COMMON_H

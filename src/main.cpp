@@ -18,6 +18,10 @@ int main(int argc, char** argv)
         {
             accel_type = tcpr::AccelType::AABB;
         }
+        else if (arg == "tinybvh")
+        {
+            accel_type = tcpr::AccelType::Tinybvh;
+        }
     }
 
     tcpr::ThreadPool::getInstance(32);
@@ -63,8 +67,10 @@ int main(int argc, char** argv)
 
     tcpr::Renderer renderer{camera, scene};
 
-    const std::string accel_name = (accel_type == tcpr::AccelType::AABB) ? "aabb" : "madmann";
-    const std::string filename   = "test_" + accel_name + ".ppm";
+    const std::string accel_name = (accel_type == tcpr::AccelType::AABB)
+                                       ? "aabb"
+                                       : (accel_type == tcpr::AccelType::Tinybvh ? "tinybvh" : "madmann");
+    const std::string filename = "test_" + accel_name + ".ppm";
     renderer.render(32, filename);
 
     return 0;

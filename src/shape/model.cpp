@@ -19,11 +19,14 @@ Model::Model(const std::filesystem::path& path, AccelType accel_type)
     rapidobj::Result result = rapidobj::ParseFile(path);
     if (result.error)
     {
-        throw std::runtime_error("Failed to load file: " + path.string() + " (" + result.error.code.message() + ")");
+        std::cerr << "Failed to load file: " << path.string()
+                  << " (" << result.error.code.message() << ")" << '\n';
+        std::exit(EXIT_FAILURE);
     }
     if (!rapidobj::Triangulate(result))
     {
-        throw std::runtime_error("Failed to triangulate: " + path.string());
+        std::cerr << "Failed to triangulate: " << path.string() << '\n';
+        std::exit(EXIT_FAILURE);
     }
 
     const auto& positions = result.attributes.positions;
